@@ -1,10 +1,3 @@
---
--- Created by IntelliJ IDEA.
--- User: leiax
--- Date: 2019/3/13
--- Time: 21:49
--- To change this template use File | Settings | File Templates.
---
 ---------------------  redis debugger setting  ------------------
 local redis = require 'redis'
 local host = "127.0.0.1"
