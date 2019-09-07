@@ -1,0 +1,5 @@
+server:
+  customConf:
+    servername: fx-Web
+    version: v0.1.0
+    mode: dev  # 可选模式：dev(开发者模式), product(生产模式)
