@@ -9,5 +9,5 @@ import (
 func (handler *WebHandler) HelloApp(c echo.Context) error {
 	cc := c.(*fxEcho.FxEchoContext)
 	cc.Pre()
-	return c.JSON(http.StatusOK, map[string]string{"result": "Hello, FX-WEB！！"})
+	return c.JSON(http.StatusOK, map[string]string{"result": "Hello, FX-WEB!!!"})
 }
