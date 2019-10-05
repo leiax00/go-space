@@ -1,36 +1,59 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"github.com/labstack/gommon/log"
 	"go.uber.org/fx"
 	"leiax00.com/fxWeb/conf"
-	"leiax00.com/fxWeb/dao"
 	"leiax00.com/fxWeb/fxEcho"
-	"leiax00.com/fxWeb/handler"
-	"leiax00.com/fxWeb/route"
-	"leiax00.com/fxWeb/service"
+	"leiax00.com/fxWeb/web"
 )
 
 func init() {
-	fmt.Println("Hello, FX-WEB!!!!!")
+	log.Info("Hello, FX-WEB!!!!!")
 }
 
 func main() {
 	ymlFile := "application.yml"
-	app := fx.New(
+	newApp(ymlFile).Run()
+
+}
+
+func newApp(ymlFile string) *fx.App {
+	return fx.New(
 		conf.NewConfModule(&ymlFile),
 		fxEcho.NewEchoModule(),
+		web.NewModule(),
 		fx.Provide(
-			handler.NewWebHandler,
-			service.NewWebService,
-			dao.NewWebDao,
+		//handler.NewWebHandler,
 		),
 		fx.Invoke(
-			route.RegisterRoutes,
+			registerHook,
+			//web.RegisterRoutes,
 		),
+		fx.ErrorHook(&fwErrorHandler{}),
 	)
-	//ctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)
-	//defer cancel()
-	//app.Start(ctx)
-	app.Run()
+}
+
+func registerHook(lc fx.Lifecycle) {
+	lc.Append(fx.Hook{
+		OnStart: startHook,
+		OnStop:  stopHook,
+	})
+}
+
+func startHook(ctx context.Context) error {
+	fxEcho.StartFxEcho()
+	return nil
+}
+
+func stopHook(ctx context.Context) error {
+	log.Info("FX-WEB:Goodbye~~")
+	return nil
+}
+
+type fwErrorHandler struct{}
+
+func (f fwErrorHandler) HandleError(err error) {
+	log.Error("Failed to start container, err:", err.Error())
 }

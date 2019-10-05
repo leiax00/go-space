@@ -2,7 +2,7 @@ package service
 
 import (
 	"leiax00.com/fxWeb/conf"
-	"leiax00.com/fxWeb/dao"
+	"leiax00.com/fxWeb/web/dao"
 )
 
 type WebService struct {

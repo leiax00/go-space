@@ -12,17 +12,16 @@ import (
 var e *echo.Echo
 
 func NewEchoModule() fx.Option {
-	return fx.Provide(newFxEcho)
+	return fx.Options(fx.Provide(newFxEcho))
 }
 
 func newFxEcho() *echo.Echo {
 	e = echo.New()
 	setConfig()
-	startFxEcho()
 	return e
 }
 
-func startFxEcho() {
+func StartFxEcho() {
 	s := &http.Server{
 		Addr:         ":8080",
 		ReadTimeout:  20 * time.Minute,
