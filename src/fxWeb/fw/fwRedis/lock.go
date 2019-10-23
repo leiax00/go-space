@@ -1,0 +1,55 @@
+package fwRedis
+
+import (
+	"errors"
+	"fmt"
+	"github.com/go-redis/redis/v7"
+	"github.com/satori/go.uuid"
+	"leiax00.com/fxWeb/util"
+	"time"
+)
+
+func GetLock(lockName string, acquireTimeout, lockTimeOut time.Duration) (string, error) {
+	code := uuid.NewV4().String()
+	endTime := util.FwTimer.CalcMillis(time.Now().Add(acquireTimeout))
+	for util.FwTimer.CalcMillis(time.Now()) <= endTime {
+		if success, err := fwRedisClient.SetNX(lockName, code, lockTimeOut).Result(); err != nil && err != redis.Nil {
+			return "", err
+		} else if success {
+			return code, nil
+		} else if fwRedisClient.TTL(lockName).Val() == -1 {
+			fwRedisClient.Expire(lockName, lockTimeOut)
+		}
+		time.Sleep(time.Millisecond)
+	}
+	return "", errors.New("timeout")
+}
+
+//var count = 0  // test assist
+func ReleaseLock(lockName, code string) bool {
+	txf := func(tx *redis.Tx) error {
+		if v, err := tx.Get(lockName).Result(); err != nil && err != redis.Nil {
+			return err
+		} else if v == code {
+			_, err := tx.Pipelined(func(pipe redis.Pipeliner) error {
+				//count++
+				//fmt.Println(count)
+				pipe.Del(lockName)
+				return nil
+			})
+			return err
+		}
+		return nil
+	}
+
+	for {
+		if err := fwRedisClient.Watch(txf, lockName); err == nil {
+			return true
+		} else if err == redis.TxFailedErr {
+			fmt.Println("watch key is modified, retry to release lock. err:", err.Error())
+		} else {
+			fmt.Println("err:", err.Error())
+			return false
+		}
+	}
+}
