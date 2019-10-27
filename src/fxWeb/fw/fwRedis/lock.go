@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v7"
 	"github.com/satori/go.uuid"
-	"leiax00.com/fxWeb/util"
 	"time"
 )
 
 func GetLock(lockName string, acquireTimeout, lockTimeOut time.Duration) (string, error) {
 	code := uuid.NewV4().String()
-	endTime := util.FwTimer.CalcMillis(time.Now().Add(acquireTimeout))
-	for util.FwTimer.CalcMillis(time.Now()) <= endTime {
+	//endTime := util.FwTimer.CalcMillis(time.Now().Add(acquireTimeout))
+	endTime := time.Now().Add(acquireTimeout).UnixNano()
+	//for util.FwTimer.CalcMillis(time.Now()) <= endTime {
+	for time.Now().UnixNano() <= endTime {
 		if success, err := fwRedisClient.SetNX(lockName, code, lockTimeOut).Result(); err != nil && err != redis.Nil {
 			return "", err
 		} else if success {
