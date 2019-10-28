@@ -1,7 +1,7 @@
 package service
 
 import (
-	"leiax00.com/fxWeb/conf"
+	"leiax00.com/fxWeb/fw/conf"
 	"leiax00.com/fxWeb/web/dao"
 )
 

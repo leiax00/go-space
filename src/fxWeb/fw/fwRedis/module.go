@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v7"
 	"go.uber.org/fx"
+	"time"
 )
 
 func NewFwRedisModule() fx.Option {
@@ -17,7 +18,16 @@ func NewFwRedisModule() fx.Option {
 }
 
 func newRedisConf() *redis.Options {
-	return nil
+	timeout := 20 * time.Second
+	return &redis.Options{
+		Addr:         "127.0.0.1:6379",
+		Password:     "root",
+		DialTimeout:  timeout,
+		ReadTimeout:  timeout,
+		WriteTimeout: timeout,
+		PoolSize:     10,
+		PoolTimeout:  timeout + 1,
+	}
 }
 
 func newRedisClient(opts *redis.Options) *redis.Client {

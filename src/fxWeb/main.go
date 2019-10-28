@@ -4,8 +4,9 @@ import (
 	"context"
 	"github.com/labstack/gommon/log"
 	"go.uber.org/fx"
-	"leiax00.com/fxWeb/conf"
-	"leiax00.com/fxWeb/fxEcho"
+	"leiax00.com/fxWeb/fw/conf"
+	"leiax00.com/fxWeb/fw/fwRedis"
+	"leiax00.com/fxWeb/fw/fxEcho"
 	"leiax00.com/fxWeb/web"
 )
 
@@ -23,6 +24,7 @@ func newApp(ymlFile string) *fx.App {
 	return fx.New(
 		conf.NewConfModule(&ymlFile),
 		fxEcho.NewEchoModule(),
+		fwRedis.NewFwRedisModule(),
 		web.NewModule(),
 		fx.Provide(
 		//handler.NewWebHandler,

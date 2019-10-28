@@ -1,20 +1,22 @@
 package dao
 
 import (
+	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/labstack/gommon/log"
-	"leiax00.com/fxWeb/conf"
+	"leiax00.com/fxWeb/fw/conf"
 )
 
 type WebDao struct {
 	conf *conf.Config
 	db   *gorm.DB
+	rc   *redis.Client
 }
 
-func NewWebDao(conf *conf.Config) *WebDao {
+func NewWebDao(conf *conf.Config, client *redis.Client) *WebDao {
 	db, _ := gorm.Open("postgres", "host=localhost port=5432 user=leiax dbname=postgres password=")
-	return &WebDao{conf: conf, db: db}
+	return &WebDao{conf: conf, db: db, rc: client}
 }
 
 func (dao WebDao) NewClient() *gorm.DB {

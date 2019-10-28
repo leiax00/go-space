@@ -2,7 +2,7 @@ package handler
 
 import (
 	"go.uber.org/fx"
-	"leiax00.com/fxWeb/conf"
+	"leiax00.com/fxWeb/fw/conf"
 	"leiax00.com/fxWeb/web/service"
 )
 
