@@ -21,7 +21,7 @@ func newRedisConf() *redis.Options {
 	timeout := 20 * time.Second
 	return &redis.Options{
 		Addr:         "127.0.0.1:6379",
-		Password:     "root",
+		Password:     "",
 		DialTimeout:  timeout,
 		ReadTimeout:  timeout,
 		WriteTimeout: timeout,

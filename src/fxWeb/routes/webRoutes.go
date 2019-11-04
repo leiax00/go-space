@@ -11,5 +11,6 @@ func RegisterWebRoutes(handler *handler.WebHandler, e *echo.Echo) {
 	group.GET("/db/table/create", handler.CreateTable)
 	group.GET("/db/table/delete", handler.DeleteTable)
 	group.GET("/redis/client", handler.QueryRedisClientInfo)
+	group.POST("/redis/client/modify", handler.ModifyRedisConf)
 	e.Logger.Info("Success to register web routes!!!")
 }
