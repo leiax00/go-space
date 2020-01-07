@@ -33,11 +33,9 @@ local function add(a, b)
         local bb = aMax and (b[i - delta] or 0) or (b[i] or 0)
         local t = d + aa + bb
         if i ~= 1 and #tostring(t) > #tostring(math.max(aa, bb)) then
-            d = 1
-            c[i] = string.sub(tostring(t), 2)
+            c[i], d = string.sub(tostring(t), 2), 1
         else
-            d = 0
-            c[i] = tostring(t)
+            c[i], d = tostring(t), 0
         end
     end
     return get(c)
@@ -52,8 +50,7 @@ local function sub(a, b)
         local bb = aMax and (b[i - delta] or 0) or (b[i] or 0)
         local t = d + aa - bb
         if i ~= 1 and t < 0 then
-            t = t + math.pow(10, #tostring(aa))
-            d = -1
+            t, d = t + math.pow(10, #tostring(aa)), -1
         else
             d = 0
         end
@@ -79,3 +76,12 @@ print(sub('1300', '1200'))
 print(sub('123456789', '123456789'))
 print(sub('123456789', '1234567890123'))
 print(sub('1234567890123', '123456789'))
+
+--2468567891234568110
+--130001200
+--2500
+--9900
+--100
+--000000000
+--765555566666
+--1234444433334
