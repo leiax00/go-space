@@ -1,3 +1,4 @@
+local stepNum = 10000
 local function build(str)
     local n, c, s = math.floor(#str / 4), {}, 1
     if #str % 4 ~= 0 then
@@ -12,8 +13,13 @@ end
 local function get(c)
     local r = ""
     for i = #c, 1, -1 do
-        if r ~= '' or tonumber(c[i]) ~= 0 then
-            r = r .. c[i]
+        if tonumber(c[#c]) < 0 and tonumber(c[i]) > 0 then
+            local v = math.pow(10, #c[i]) - tonumber(c[i])
+            r = string.sub(r, 1, #r - 1) .. tostring(tonumber(string.sub(r, #r)) - 1) .. tostring(v)
+        else
+            if r ~= '' or tonumber(c[i]) ~= 0 then
+                r = r .. c[i]
+            end
         end
     end
     return r ~= '' and r or '0'
@@ -25,7 +31,10 @@ local function add(a, b)
     local count = math.max(#a, #b)
     for i = 1, count, 1 do
         local t = d + (a[i] or 0) + (b[i] or 0)
-        c[i], d = i ~= count and tostring(t % 10000), math.floor(t/10000) or tostring(t), 0
+        c[i], d = tostring(t), 0
+        if i ~= count then
+            c[i], d = tostring(t % stepNum), math.floor(t/ stepNum)
+        end
     end
     return get(c)
 end
@@ -33,15 +42,12 @@ end
 local function sub(a, b)
     local c, d = {}, 0
     a, b = build(a), build(b)
-    local delta, aMax = math.abs(#a - #b), #a > #b
-    for i = math.max(#a, #b), 1, -1 do
-        local aa = aMax and (a[i] or 0) or (a[i - delta] or 0)
-        local bb = aMax and (b[i - delta] or 0) or (b[i] or 0)
-        local t = d + aa - bb
-        if i ~= 1 and t < 0 then
-            t, d = t + math.pow(10, #tostring(aa)), -1
-        else
-            d = 0
+    local count = math.max(#a, #b)
+    for i = 1, count, 1 do
+        local t = d + (a[i] or 0) - (b[i] or 0)
+        d = 0
+        if i ~= count and t < 0 then
+            t, d = t + stepNum, -1
         end
         c[i] = tostring(t)
     end
@@ -56,12 +62,12 @@ local function div(a, b)
 
 end
 
---local c = add("1234567891234567890", "1234000000000000220")
---print(c)
+local c = add("1234567891234567890", "1234000000000000220")
+print(c)
 print(add('1200', '130000000'))
---print(add('1200', '1300'))
---print(sub('1200', '1300'))
---print(sub('1300', '1200'))
---print(sub('123456789', '123456789'))
---print(sub('123456789', '1234567890123'))
---print(sub('1234567890123', '123456789'))
+print(add('1200', '1300'))
+print(sub('1200', '1300'))
+print(sub('1300', '1200'))
+print(sub('123456789', '123456789'))
+print(sub('123456789', '1234567890123'))
+print(sub('1234567890123', '123456789'))
